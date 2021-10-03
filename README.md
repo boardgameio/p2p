@@ -1,5 +1,7 @@
 # @boardgame.io/p2p
 
+[![npm version](https://badge.fury.io/js/@boardgame.io%2Fp2p.svg)](https://www.npmjs.com/package/@boardgame.io/p2p) [![Gitter](https://badges.gitter.im/boardgame-io.svg)](https://gitter.im/boardgame-io)
+
 > Experimental peer-to-peer multiplayer transport for [boardgame.io][bgio]
 
 This package provides an experimental multiplayer transport implementation, which establishes a peer-to-peer connection between clients. Instead of using a Node.js server to maintain authoritative match state and communicate between clients, a host client maintains the authoritative state in their browser and manages connections between all the connected peers.
