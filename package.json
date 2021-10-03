@@ -1,0 +1,60 @@
+{
+  "name": "@boardgame.io/p2p",
+  "version": "0.0.1",
+  "description": "Experimental peer-to-peer multiplayer transport for boardgame.io",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/boardgameio/p2p.git"
+  },
+  "keywords": [
+    "peerjs",
+    "p2p",
+    "multiplayer",
+    "boardgame.io",
+    "webrtc"
+  ],
+  "author": "Chris Swithinbank <swithinbank@gmail.com> (http://chrisswithinbank.net/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/boardgameio/p2p/issues"
+  },
+  "homepage": "https://github.com/boardgameio/p2p#readme",
+  "funding": [
+    "https://github.com/boardgameio/boardgame.io?sponsor=1",
+    {
+      "type": "opencollective",
+      "url": "https://opencollective.com/boardgameio"
+    }
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/*"
+  ],
+  "scripts": {
+    "prettier:check": "prettier --list-different \"{src,test}/**/*.ts\"",
+    "prettier:write": "prettier --write \"{src,test}/**/*.ts\"",
+    "prebuild": "npm run prettier:check",
+    "build": "tsc -b src",
+    "prerelease": "npm run test && npm run build",
+    "release": "standard-version -s",
+    "prepublishOnly": "npm run build",
+    "test": "eslint ."
+  },
+  "dependencies": {
+    "peerjs": "^1.3.2"
+  },
+  "peerDependencies": {
+    "boardgame.io": ">=0.49.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.31.1",
+    "@typescript-eslint/parser": "^4.31.1",
+    "boardgame.io": "^0.49.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "prettier": "^2.4.0",
+    "standard-version": "^9.3.1",
+    "typescript": "^4.4.3"
+  }
+}
