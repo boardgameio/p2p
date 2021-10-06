@@ -141,7 +141,10 @@ class P2PHost {
       return true;
     }
 
-    // If credentials match (or credentials are neither provided nor stored), authenticate.
+    // If credentials are neither provided nor stored, authenticate.
+    if (!existingCredentials && !credentials) return true;
+
+    // If credentials match, authenticate.
     return credentials === existingCredentials;
   }
 
