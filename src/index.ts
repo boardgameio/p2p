@@ -308,6 +308,7 @@ class P2PTransport extends Transport {
  *   game: MyGame,
  *   matchID,
  *   playerID: '0',
+ *   credentials: 'string-to-protect-playerID-zero',
  *   multiplayer: P2P({ isHost: true }),
  * });
  *
@@ -317,6 +318,7 @@ class P2PTransport extends Transport {
  *   game: MyGame,
  *   matchID,
  *   playerID: '1',
+ *   credentials: 'string-to-protect-playerID-one',
  *   multiplayer: P2P(),
  * });
  */

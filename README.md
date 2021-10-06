@@ -60,6 +60,10 @@ You can configure the peer-to-peer transport by passing an optional object. It c
 
   Passed to PeerJS when creating a new `Peer` connection. [See PeerJS docs for full list of options →][pjo]
 
+## Authenticating players
+
+By default, any client can connect with any `playerID` and successfully submit moves as that player. If you want to avoid this, you must set `credentials` on your boardgame.io clients. The first client to connect with a given `playerID` will authenticate and all future connections for that `playerID` must also provide the same `credentials` to successfully connect.
+
 ## Notes
 
 ### What does experimental mean?
