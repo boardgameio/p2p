@@ -24,6 +24,7 @@ interface Client {
   send: Peer.DataConnection["send"];
   metadata: {
     playerID: PlayerID | null;
+    credentials: string | undefined;
   };
 }
 
@@ -50,6 +51,7 @@ class P2PHost {
   private clients: Map<Client, Client> = new Map();
   private matchID: string;
   private master: Master;
+  private db: P2PDB;
 
   constructor({
     game,
@@ -80,10 +82,10 @@ class P2PHost {
       throw new Error("setupData Error: " + match.setupDataError);
     }
 
-    const db = new P2PDB();
-    db.createMatch(this.matchID, match);
+    this.db = new P2PDB();
+    this.db.createMatch(this.matchID, match);
 
-    this.master = new Master(game, db, {
+    this.master = new Master(game, this.db, {
       send: ({ playerID, ...data }) => {
         for (const [client] of this.clients) {
           if (client.metadata.playerID === playerID) client.send(data);
@@ -98,13 +100,52 @@ class P2PHost {
   }
 
   registerClient(client: Client): void {
+    const isAuthenticated: boolean = this.authenticateClient(client);
+    // If the client failed to authenticate, don’t register it.
+    if (!isAuthenticated) return;
+    const { playerID, credentials } = client.metadata;
     this.clients.set(client, client);
-    this.master.onConnectionChange(
-      this.matchID,
-      client.metadata.playerID,
-      undefined,
-      true
-    );
+    this.master.onConnectionChange(this.matchID, playerID, credentials, true);
+  }
+
+  /**
+   * Store a player’s credentials on initial connection and authenticate them subsequently.
+   * @param client Client to authenticate.
+   * @returns `true` if the client was successfully authenticated, `false` if it wasn’t.
+   */
+  private authenticateClient(client: Client): boolean {
+    const { playerID, credentials } = client.metadata;
+    const { metadata } = this.db.fetch(this.matchID);
+
+    // Spectators provide null/undefined playerIDs and don’t need authenticating.
+    if (
+      playerID === null ||
+      playerID === undefined ||
+      !(+playerID in metadata.players)
+    ) {
+      return true;
+    }
+
+    const existingCredentials = metadata.players[+playerID].credentials;
+
+    // If no credentials exist yet for this player, store those
+    // provided by the connecting client and authenticate.
+    if (!existingCredentials && credentials) {
+      this.db.setMetadata(this.matchID, {
+        ...metadata,
+        players: {
+          ...metadata.players,
+          [+playerID]: { ...metadata.players[+playerID], credentials },
+        },
+      });
+      return true;
+    }
+
+    // If credentials are neither provided nor stored, authenticate.
+    if (!existingCredentials && !credentials) return true;
+
+    // If credentials match, authenticate.
+    return credentials === existingCredentials;
   }
 
   unregisterClient(client: Client): void {
@@ -153,7 +194,7 @@ class P2PTransport extends Transport {
 
   connect(): void {
     const hostID = this.namespacedPeerID();
-    const metadata = { playerID: this.playerID };
+    const metadata = { playerID: this.playerID, credentials: this.credentials };
 
     this.peer = new Peer(this.isHost ? hostID : undefined, this.peerOptions);
 
