@@ -149,13 +149,9 @@ class P2PHost {
   }
 
   unregisterClient(client: Client): void {
+    const { credentials, playerID } = client.metadata;
     this.clients.delete(client);
-    this.master.onConnectionChange(
-      this.matchID,
-      client.metadata.playerID,
-      undefined,
-      false
-    );
+    this.master.onConnectionChange(this.matchID, playerID, credentials, false);
   }
 
   processAction(data: ClientAction): void {
