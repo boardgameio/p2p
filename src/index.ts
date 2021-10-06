@@ -173,6 +173,7 @@ class P2PTransport extends Transport {
         metadata,
       });
 
+      // When a peer connects to the host, register it and set up event handlers.
       this.peer.on("connection", (client) => {
         host.registerClient(client);
         client.on("data", (data) => void host.processAction(data));
