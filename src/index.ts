@@ -24,6 +24,7 @@ interface Client {
   send: Peer.DataConnection["send"];
   metadata: {
     playerID: PlayerID | null;
+    credentials: string | undefined;
   };
 }
 
@@ -99,13 +100,9 @@ class P2PHost {
   }
 
   registerClient(client: Client): void {
+    const { playerID, credentials } = client.metadata;
     this.clients.set(client, client);
-    this.master.onConnectionChange(
-      this.matchID,
-      client.metadata.playerID,
-      undefined,
-      true
-    );
+    this.master.onConnectionChange(this.matchID, playerID, credentials, true);
   }
 
   unregisterClient(client: Client): void {
@@ -154,7 +151,7 @@ class P2PTransport extends Transport {
 
   connect(): void {
     const hostID = this.namespacedPeerID();
-    const metadata = { playerID: this.playerID };
+    const metadata = { playerID: this.playerID, credentials: this.credentials };
 
     this.peer = new Peer(this.isHost ? hostID : undefined, this.peerOptions);
 
