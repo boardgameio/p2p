@@ -50,6 +50,7 @@ class P2PHost {
   private clients: Map<Client, Client> = new Map();
   private matchID: string;
   private master: Master;
+  private db: P2PDB;
 
   constructor({
     game,
@@ -80,10 +81,10 @@ class P2PHost {
       throw new Error("setupData Error: " + match.setupDataError);
     }
 
-    const db = new P2PDB();
-    db.createMatch(this.matchID, match);
+    this.db = new P2PDB();
+    this.db.createMatch(this.matchID, match);
 
-    this.master = new Master(game, db, {
+    this.master = new Master(game, this.db, {
       send: ({ playerID, ...data }) => {
         for (const [client] of this.clients) {
           if (client.metadata.playerID === playerID) client.send(data);
