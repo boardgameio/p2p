@@ -45,7 +45,7 @@
     "peerjs": "^1.3.2"
   },
   "peerDependencies": {
-    "boardgame.io": ">=0.49.0"
+    "boardgame.io": ">=0.49.1"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.31.1",
