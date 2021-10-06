@@ -184,7 +184,7 @@ class P2PTransport extends Transport {
     super(opts);
     this.isHost = Boolean(isHost);
     this.peerOptions = peerOptions;
-    this.game = opts.game!;
+    this.game = opts.game;
   }
 
   private namespacedPeerID(): string {
