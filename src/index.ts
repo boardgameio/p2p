@@ -1,7 +1,11 @@
 import Peer from "peerjs";
 import type { PeerJSOption } from "peerjs";
 
-import { createMatch, Transport } from "boardgame.io/internal";
+import {
+  createMatch,
+  getFilterPlayerView,
+  Transport,
+} from "boardgame.io/internal";
 import { Master } from "boardgame.io/master";
 import type {
   ChatMessage,
@@ -85,15 +89,19 @@ class P2PHost {
     this.db = new P2PDB();
     this.db.createMatch(this.matchID, match);
 
+    const filterPlayerView = getFilterPlayerView(game);
+
     this.master = new Master(game, this.db, {
       send: ({ playerID, ...data }) => {
+        const playerView = filterPlayerView(playerID, data);
         for (const [client] of this.clients) {
-          if (client.metadata.playerID === playerID) client.send(data);
+          if (client.metadata.playerID === playerID) client.send(playerView);
         }
       },
       sendAll: (data) => {
         for (const [client] of this.clients) {
-          client.send(data);
+          const playerView = filterPlayerView(client.metadata.playerID, data);
+          client.send(playerView);
         }
       },
     });
