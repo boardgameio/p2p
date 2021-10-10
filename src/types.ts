@@ -2,6 +2,7 @@ import type Peer from "peerjs";
 import type { Master } from "boardgame.io/master";
 import type { PlayerID } from "boardgame.io";
 
+/** Interface used by `P2PHost` to communicate with connected clients. */
 export interface Client {
   send: Peer.DataConnection["send"];
   metadata: {

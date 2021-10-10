@@ -64,6 +64,10 @@ export class P2PHost {
     });
   }
 
+  /**
+   * Add a client to the host’s registry.
+   * The host calls the `send` method on registered clients to dispatch updates to them.
+   */
   registerClient(client: Client): void {
     const isAuthenticated: boolean = this.authenticateClient(client);
     // If the client failed to authenticate, don’t register it.
@@ -113,12 +117,14 @@ export class P2PHost {
     return credentials === existingCredentials;
   }
 
+  /** Remove a client from the host’s registry. */
   unregisterClient(client: Client): void {
     const { credentials, playerID } = client.metadata;
     this.clients.delete(client);
     this.master.onConnectionChange(this.matchID, playerID, credentials, false);
   }
 
+  /** Submit an action to the host to be processed and emitted to registered clients. */
   processAction(data: ClientAction): void {
     switch (data.type) {
       case "update":

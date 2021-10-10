@@ -58,11 +58,13 @@ class P2PTransport extends Transport {
     this.game = opts.game;
   }
 
+  /** Synthesized peer ID for looking up this match’s host. */
   private get hostID(): string {
     if (!this.matchID) throw new Error("matchID must be provided");
     return `boardgameio-${this.gameName}-matchid-${this.matchID}`;
   }
 
+  /** Client metadata for this client instance. */
   private get metadata(): Client["metadata"] {
     return { playerID: this.playerID, credentials: this.credentials };
   }
@@ -103,6 +105,7 @@ class P2PTransport extends Transport {
     }
   }
 
+  /** Establish a connection to a remote host from a peer client. */
   private connectToHost() {
     if (!this.peer) return;
     const host = this.peer.connect(this.hostID, { metadata: this.metadata });
@@ -114,6 +117,7 @@ class P2PTransport extends Transport {
     host.on("data", (data) => void this.notifyClient(data));
   }
 
+  /** Execute tasks once the connection to a remote or local host has been established. */
   private onConnect() {
     this.setConnectionStatus(true);
     this.requestSync();
