@@ -70,10 +70,10 @@ class P2PTransport extends Transport {
   }
 
   connect(): void {
-    const hostID = this.hostID;
-    const metadata = this.metadata;
-
-    this.peer = new Peer(this.isHost ? hostID : undefined, this.peerOptions);
+    this.peer = new Peer(
+      this.isHost ? this.hostID : undefined,
+      this.peerOptions
+    );
     this.peer.on("error", this.onError);
 
     if (this.isHost) {
@@ -89,7 +89,7 @@ class P2PTransport extends Transport {
       // Register a local client for the host that applies updates directly to itself.
       host.registerClient({
         send: (data) => void this.notifyClient(data),
-        metadata,
+        metadata: this.metadata,
       });
 
       // When a peer connects to the host, register it and set up event handlers.
