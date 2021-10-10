@@ -257,21 +257,21 @@ class P2PTransport extends Transport {
 
       this.requestSync();
     } else {
-      this.peer.on("open", () => {
-        if (!this.peer) return;
-        const host = this.peer.connect(hostID, { metadata });
-        // Forward actions to the host.
-        this.emit = (action) => void host.send(action);
-        // Emit sync action when a connection to the host is established.
-        host.on("open", () => void this.requestSync());
-        // Apply updates received from the host.
-        host.on("data", (data) => {
-          this.notifyClient(data);
-        });
-      });
+      this.peer.on("open", () => void this.connectToHost());
     }
 
     this.setConnectionStatus(true);
+  }
+
+  private connectToHost() {
+    if (!this.peer) return;
+    const host = this.peer.connect(this.hostID, { metadata: this.metadata });
+    // Forward actions to the host.
+    this.emit = (action) => void host.send(action);
+    // Emit sync action when a connection to the host is established.
+    host.on("open", () => void this.requestSync());
+    // Apply updates received from the host.
+    host.on("data", (data) => void this.notifyClient(data));
   }
 
   disconnect(): void {
