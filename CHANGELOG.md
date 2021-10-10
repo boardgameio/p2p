@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.1](https://github.com/boardgameio/p2p/compare/v0.2.0...v0.2.1) (2021-10-10)
+
+
+### Features
+
+* Add onError callback ([14ecafe](https://github.com/boardgameio/p2p/commit/14ecafe4119261b6417a1cd3d067179373a8ce97)), closes [#5](https://github.com/boardgameio/p2p/issues/5)
+
 ## [0.2.0](https://github.com/boardgameio/p2p/compare/v0.1.1...v0.2.0) (2021-10-07)
 
 
