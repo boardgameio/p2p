@@ -255,12 +255,10 @@ class P2PTransport extends Transport {
         client.on("close", () => void host.unregisterClient(client));
       });
 
-      this.requestSync();
+      this.onConnect();
     } else {
       this.peer.on("open", () => void this.connectToHost());
     }
-
-    this.setConnectionStatus(true);
   }
 
   private connectToHost() {
@@ -269,9 +267,14 @@ class P2PTransport extends Transport {
     // Forward actions to the host.
     this.emit = (action) => void host.send(action);
     // Emit sync action when a connection to the host is established.
-    host.on("open", () => void this.requestSync());
+    host.on("open", () => void this.onConnect());
     // Apply updates received from the host.
     host.on("data", (data) => void this.notifyClient(data));
+  }
+
+  private onConnect() {
+    this.setConnectionStatus(true);
+    this.requestSync();
   }
 
   disconnect(): void {
