@@ -216,14 +216,18 @@ class P2PTransport extends Transport {
     this.game = opts.game;
   }
 
-  private namespacedPeerID(): string {
+  private get hostID(): string {
     if (!this.matchID) throw new Error("matchID must be provided");
     return `boardgameio-${this.gameName}-matchid-${this.matchID}`;
   }
 
+  private get metadata(): Client["metadata"] {
+    return { playerID: this.playerID, credentials: this.credentials };
+  }
+
   connect(): void {
-    const hostID = this.namespacedPeerID();
-    const metadata = { playerID: this.playerID, credentials: this.credentials };
+    const hostID = this.hostID;
+    const metadata = this.metadata;
 
     this.peer = new Peer(this.isHost ? hostID : undefined, this.peerOptions);
     this.peer.on("error", this.onError);
