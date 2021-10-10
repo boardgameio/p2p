@@ -207,6 +207,6 @@ class P2PTransport extends Transport {
  * });
  */
 export const P2P =
-  (p2pOpts: P2POpts = {}) =>
+  (p2pOpts: P2POpts = {}): ((transportOpts: TransportOpts) => P2PTransport) =>
   (transportOpts: TransportOpts): P2PTransport =>
     new P2PTransport({ ...transportOpts, ...p2pOpts });
