@@ -106,7 +106,7 @@ class P2PTransport extends Transport {
   }
 
   /** Establish a connection to a remote host from a peer client. */
-  private connectToHost() {
+  private connectToHost(): void {
     if (!this.peer) return;
     const host = this.peer.connect(this.hostID, { metadata: this.metadata });
     // Forward actions to the host.
@@ -118,7 +118,7 @@ class P2PTransport extends Transport {
   }
 
   /** Execute tasks once the connection to a remote or local host has been established. */
-  private onConnect() {
+  private onConnect(): void {
     this.setConnectionStatus(true);
     this.requestSync();
   }
