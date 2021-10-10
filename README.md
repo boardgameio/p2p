@@ -109,7 +109,5 @@ The code in this repository is provided under [the MIT License](LICENSE).
 [poc]: https://opencollective.com/peer
 [pje]: https://peerjs.com/docs.html#peeron-error
 [pjo]: https://peerjs.com/docs.html#peer-options
-[netlify]: https://www.netlify.com/
-[render]: https://render.com/
 [newissue]: https://github.com/boardgameio/p2p/issues/new/choose
 [coc]: CODE_OF_CONDUCT.md
