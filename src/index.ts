@@ -19,9 +19,26 @@ import { P2PDB } from "./db";
 
 type TransportOpts = ConstructorParameters<typeof Transport>[0];
 
+type PeerError = Error & {
+  type:
+    | "browser-incompatible"
+    | "disconnected"
+    | "invalid-id"
+    | "invalid-key"
+    | "network"
+    | "peer-unavailable"
+    | "ssl-unavailable"
+    | "server-error"
+    | "socket-error"
+    | "socket-closed"
+    | "unavailable-id"
+    | "webrtc";
+};
+
 interface P2POpts {
   isHost?: boolean;
   peerOptions?: PeerJSOption;
+  onError?: (error: PeerError) => void;
 }
 
 interface Client {
@@ -180,13 +197,21 @@ class P2PHost {
 class P2PTransport extends Transport {
   private peer: Peer | null = null;
   private peerOptions: PeerJSOption;
+  private onError: (error: PeerError) => void;
   private isHost: boolean;
   private game: Game;
   private emit?: (data: ClientAction) => void;
 
-  constructor({ isHost, peerOptions = {}, ...opts }: TransportOpts & P2POpts) {
+  constructor({
+    isHost,
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    onError = () => {},
+    peerOptions = {},
+    ...opts
+  }: TransportOpts & P2POpts) {
     super(opts);
     this.isHost = Boolean(isHost);
+    this.onError = onError;
     this.peerOptions = peerOptions;
     this.game = opts.game;
   }
@@ -201,6 +226,7 @@ class P2PTransport extends Transport {
     const metadata = { playerID: this.playerID, credentials: this.credentials };
 
     this.peer = new Peer(this.isHost ? hostID : undefined, this.peerOptions);
+    this.peer.on("error", this.onError);
 
     if (this.isHost) {
       const host = new P2PHost({
@@ -297,6 +323,7 @@ class P2PTransport extends Transport {
  *
  * @param p2pOpts Transport configuration options.
  * @param p2pOpts.isHost Boolean flag to indicate if this client is responsible for the authoritative game state.
+ * @param p2pOpts.onError Error callback.
  * @param p2pOpts.peerOptions Options to pass when instantiating a new PeerJS `Peer`.
  * @returns A transport factory for use by a boardgame.io client.
  * @example

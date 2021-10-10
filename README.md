@@ -53,6 +53,13 @@ You can configure the peer-to-peer transport by passing an optional object. It c
 
   Controls whether or not this instance is a host and controls the authoritative game state. Only one client should have `isHost: true`.
 
+- #### `onError`
+
+  - **type:** `(error: Error) => void`
+  - **default:** `undefined`
+
+  Callback to subscribe to subscribe to [PeerJS’s `'error'` event][pje].
+
 - #### `peerOptions`
 
   - **type:** [`PeerJSOption`][pjo]
@@ -100,6 +107,7 @@ The code in this repository is provided under [the MIT License](LICENSE).
 [pjs]: https://github.com/peers/peerjs
 [psrvr]: https://peerjs.com/peerserver.html
 [poc]: https://opencollective.com/peer
+[pje]: https://peerjs.com/docs.html#peeron-error
 [pjo]: https://peerjs.com/docs.html#peer-options
 [netlify]: https://www.netlify.com/
 [render]: https://render.com/
