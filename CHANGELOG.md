@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.3.0](https://github.com/boardgameio/p2p/compare/v0.2.1...v0.3.0) (2021-10-11)
+
+
+### Features
+
+* Retry connecting to host on connection failure ([edefccb](https://github.com/boardgameio/p2p/commit/edefccb48bccce281dd5fe9b338e41b001c0fbd7)), closes [#7](https://github.com/boardgameio/p2p/issues/7)
+
+
+### Bug Fixes
+
+* Sanitise the host ID to ensure it passes PeerJS validation ([f46b72d](https://github.com/boardgameio/p2p/commit/f46b72dfb3a14863a6ea4c6129bed54d031c52aa))
+
 ### [0.2.1](https://github.com/boardgameio/p2p/compare/v0.2.0...v0.2.1) (2021-10-10)
 
 

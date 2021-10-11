@@ -1,6 +1,6 @@
 {
   "name": "@boardgame.io/p2p",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Experimental peer-to-peer multiplayer transport for boardgame.io",
   "repository": {
     "type": "git",
