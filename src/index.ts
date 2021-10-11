@@ -61,7 +61,12 @@ class P2PTransport extends Transport {
   /** Synthesized peer ID for looking up this match’s host. */
   private get hostID(): string {
     if (!this.matchID) throw new Error("matchID must be provided");
-    return `boardgameio-${this.gameName}-matchid-${this.matchID}`;
+    // Sanitize host ID for PeerJS: remove any non-alphanumeric characters, trim
+    // leading/trailing hyphens/underscores and collapse consecutive hyphens/underscores.
+    return `boardgameio-${this.gameName}-matchid-${this.matchID}`.replace(
+      /([^A-Za-z0-9_-]|^[_-]+|[_-]+$|(?<=[_-])[_-]+)/g,
+      ""
+    );
   }
 
   /** Client metadata for this client instance. */
