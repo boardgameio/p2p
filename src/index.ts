@@ -36,6 +36,37 @@ interface P2POpts {
   onError?: (error: PeerError) => void;
 }
 
+/**
+ * Abstraction around `setTimeout`/`clearTimeout` that doubles the timeout
+ * interval each time it is run until reaches a maximum interval length.
+ */
+class BackoffScheduler {
+  private readonly initialInterval = 500;
+  private readonly maxInterval = 32_000;
+  private interval = this.initialInterval;
+  private taskID?: NodeJS.Timeout;
+
+  private cancelTask() {
+    if (this.taskID) {
+      clearTimeout(this.taskID);
+      delete this.taskID;
+    }
+  }
+
+  schedule(task: () => void) {
+    this.cancelTask();
+    this.taskID = setTimeout(() => {
+      if (this.interval < this.maxInterval) this.interval *= 2;
+      task();
+    }, this.interval);
+  }
+
+  clear() {
+    this.cancelTask();
+    this.interval = this.initialInterval;
+  }
+}
+
 class P2PTransport extends Transport {
   private peer: Peer | null = null;
   private peerOptions: PeerJSOption;
@@ -43,6 +74,7 @@ class P2PTransport extends Transport {
   private isHost: boolean;
   private game: Game;
   private emit?: (data: ClientAction) => void;
+  private retryHandler: BackoffScheduler;
 
   constructor({
     isHost,
@@ -56,6 +88,7 @@ class P2PTransport extends Transport {
     this.onError = onError;
     this.peerOptions = peerOptions;
     this.game = opts.game;
+    this.retryHandler = new BackoffScheduler();
   }
 
   /** Synthesized peer ID for looking up this match’s host. */
@@ -79,7 +112,6 @@ class P2PTransport extends Transport {
       this.isHost ? this.hostID : undefined,
       this.peerOptions
     );
-    this.peer.on("error", this.onError);
 
     if (this.isHost) {
       const host = new P2PHost({
@@ -103,10 +135,18 @@ class P2PTransport extends Transport {
         client.on("data", (data) => void host.processAction(data));
         client.on("close", () => void host.unregisterClient(client));
       });
+      this.peer.on("error", this.onError);
 
       this.onConnect();
     } else {
       this.peer.on("open", () => void this.connectToHost());
+      this.peer.on("error", (error: PeerError) => {
+        if (error.type === "network" || error.type === "peer-unavailable") {
+          this.retryHandler.schedule(() => void this.connectToHost());
+        } else {
+          this.onError(error);
+        }
+      });
     }
   }
 
@@ -124,6 +164,7 @@ class P2PTransport extends Transport {
 
   /** Execute tasks once the connection to a remote or local host has been established. */
   private onConnect(): void {
+    this.retryHandler.clear();
     this.setConnectionStatus(true);
     this.requestSync();
   }
@@ -131,6 +172,7 @@ class P2PTransport extends Transport {
   disconnect(): void {
     if (this.peer) this.peer.destroy();
     this.peer = null;
+    this.retryHandler.clear();
     this.setConnectionStatus(false);
   }
 
