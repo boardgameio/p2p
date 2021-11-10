@@ -1,5 +1,9 @@
 import Peer from "peerjs";
 import type { PeerJSOption } from "peerjs";
+import nacl from "tweetnacl";
+import {
+  encodeBase64
+} from "tweetnacl-util";
 
 import { Transport } from "boardgame.io/internal";
 import type {
@@ -11,6 +15,7 @@ import type {
 
 import { P2PHost } from "./host";
 import type { ClientAction, Client } from "./types";
+import { signMessage } from "./authentication";
 
 type TransportOpts = ConstructorParameters<typeof Transport>[0];
 
@@ -34,6 +39,7 @@ interface P2POpts {
   isHost?: boolean;
   peerOptions?: PeerJSOption;
   onError?: (error: PeerError) => void;
+  keyPair?: nacl.SignKeyPair
 }
 
 /**
@@ -75,12 +81,15 @@ class P2PTransport extends Transport {
   private game: Game;
   private emit?: (data: ClientAction) => void;
   private retryHandler: BackoffScheduler;
+  private publicKey: string;
+  private privateKey: string;
 
   constructor({
     isHost,
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     onError = () => {},
     peerOptions = {},
+    keyPair = nacl.sign.keyPair(),
     ...opts
   }: TransportOpts & P2POpts) {
     super(opts);
@@ -89,6 +98,8 @@ class P2PTransport extends Transport {
     this.peerOptions = peerOptions;
     this.game = opts.game;
     this.retryHandler = new BackoffScheduler();
+    this.publicKey = encodeBase64(keyPair.publicKey);
+    this.privateKey = encodeBase64(keyPair.secretKey);
   }
 
   /** Synthesized peer ID for looking up this match’s host. */
@@ -104,7 +115,7 @@ class P2PTransport extends Transport {
 
   /** Client metadata for this client instance. */
   private get metadata(): Client["metadata"] {
-    return { playerID: this.playerID, credentials: this.credentials };
+    return { playerID: this.playerID, credentials: this.credentials == undefined ? this.publicKey: this.credentials };
   }
 
   connect(): void {
@@ -126,7 +137,7 @@ class P2PTransport extends Transport {
       // Register a local client for the host that applies updates directly to itself.
       host.registerClient({
         send: (data) => void this.notifyClient(data),
-        metadata: this.metadata,
+        metadata: { ...this.metadata, message: signMessage(this.playerID || '', this.privateKey)}
       });
 
       // When a peer connects to the host, register it and set up event handlers.
@@ -153,7 +164,7 @@ class P2PTransport extends Transport {
   /** Establish a connection to a remote host from a peer client. */
   private connectToHost(): void {
     if (!this.peer) return;
-    const host = this.peer.connect(this.hostID, { metadata: this.metadata });
+    const host = this.peer.connect(this.hostID, { metadata: { ...this.metadata, message: signMessage(this.playerID || '', this.privateKey)} });
     // Forward actions to the host.
     this.emit = (action) => void host.send(action);
     // Emit sync action when a connection to the host is established.

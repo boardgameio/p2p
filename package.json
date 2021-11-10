@@ -39,20 +39,26 @@
     "prerelease": "npm run test && npm run build",
     "release": "standard-version -s",
     "prepublishOnly": "npm run build",
-    "test": "eslint ."
+    "test": "eslint .",
+    "jest": "jest"
   },
   "dependencies": {
-    "peerjs": "^1.3.2"
+    "peerjs": "^1.3.2",
+    "tweetnacl": "^1.0.3",
+    "tweetnacl-util": "^0.15.1"
   },
   "peerDependencies": {
     "boardgame.io": ">=0.49.1"
   },
   "devDependencies": {
+    "@types/jest": "^27.0.2",
     "@typescript-eslint/eslint-plugin": "^4.31.1",
     "@typescript-eslint/parser": "^4.31.1",
     "boardgame.io": "^0.49.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
+    "jest": "^27.3.1",
+    "ts-jest": "^27.0.7",
     "prettier": "^2.4.0",
     "standard-version": "^9.3.1",
     "typescript": "^4.4.3"

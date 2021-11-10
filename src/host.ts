@@ -3,6 +3,7 @@ import { Master } from "boardgame.io/master";
 import type { Game } from "boardgame.io";
 import { P2PDB } from "./db";
 import type { Client, ClientAction } from "./types";
+import { authentication } from "./authentication";
 
 /**
  * Peer-to-peer host class, which runs a local `Master` instance
@@ -83,38 +84,8 @@ export class P2PHost {
    * @returns `true` if the client was successfully authenticated, `false` if it wasn’t.
    */
   private authenticateClient(client: Client): boolean {
-    const { playerID, credentials } = client.metadata;
     const { metadata } = this.db.fetch(this.matchID);
-
-    // Spectators provide null/undefined playerIDs and don’t need authenticating.
-    if (
-      playerID === null ||
-      playerID === undefined ||
-      !(+playerID in metadata.players)
-    ) {
-      return true;
-    }
-
-    const existingCredentials = metadata.players[+playerID].credentials;
-
-    // If no credentials exist yet for this player, store those
-    // provided by the connecting client and authenticate.
-    if (!existingCredentials && credentials) {
-      this.db.setMetadata(this.matchID, {
-        ...metadata,
-        players: {
-          ...metadata.players,
-          [+playerID]: { ...metadata.players[+playerID], credentials },
-        },
-      });
-      return true;
-    }
-
-    // If credentials are neither provided nor stored, authenticate.
-    if (!existingCredentials && !credentials) return true;
-
-    // If credentials match, authenticate.
-    return credentials === existingCredentials;
+    return authentication(this.matchID, client.metadata, metadata, this.db.setMetadata)
   }
 
   /** Remove a client from the host’s registry. */
