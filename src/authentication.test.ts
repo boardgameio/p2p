@@ -21,11 +21,11 @@ test('PlayerID not registered', () => {
 
     let serverMetadata: Server.MatchData = {...defaultMetadata, players: {}}
     
-    function store(_matchID: string, _serverMetadata: Server.MatchData) {
+    const db: any = { setMetadata: (_matchID: string, _serverMetadata: Server.MatchData) => {
         serverMetadata = _serverMetadata
-    }
+    }}
 
-    expect(authentication(matchID, player1Metadata, serverMetadata, store)).toBeTruthy();
+    expect(authentication(matchID, player1Metadata, serverMetadata, db)).toBeTruthy();
   });
 
 test('PlayerID null', () => {
@@ -34,11 +34,12 @@ test('PlayerID null', () => {
 
     let serverMetadata: Server.MatchData = {...defaultMetadata, players: {}}
     
-    function store(_matchID: string, _serverMetadata: Server.MatchData) {
+    
+    const db: any = { setMetadata: (_matchID: string, _serverMetadata: Server.MatchData) => {
         serverMetadata = _serverMetadata
-    }
+    }}
 
-    expect(authentication(matchID, player1Metadata, serverMetadata, store)).toBeTruthy();
+    expect(authentication(matchID, player1Metadata, serverMetadata, db)).toBeTruthy();
   });
 
   test('Player1 is registered and Player2 sends wrong message', () => {
@@ -65,14 +66,15 @@ test('PlayerID null', () => {
         }
     }
     
-    function store(_matchID: string, _serverMetadata: Server.MatchData) {
+    
+    const db: any = { setMetadata: (_matchID: string, _serverMetadata: Server.MatchData) => {
         serverMetadata = _serverMetadata
-    }
+    }}
 
     expect(serverMetadata.players[+player1Metadata.playerID].credentials).toBeUndefined()
-    expect(authentication(matchID, player1Metadata, serverMetadata, store)).toBeTruthy();
+    expect(authentication(matchID, player1Metadata, serverMetadata, db)).toBeTruthy();
     expect(serverMetadata.players[+player1Metadata.playerID].credentials).toBe(player1Keys.publicKey)
-    expect(authentication(matchID, player2Metadata, serverMetadata, store)).toBeFalsy();
+    expect(authentication(matchID, player2Metadata, serverMetadata, db)).toBeFalsy();
   });
 
   test('Player1 is registered and Player2 sends wrong message', () => {
@@ -100,12 +102,12 @@ test('PlayerID null', () => {
         }
     }
     
-    function store(_matchID: string, _serverMetadata: Server.MatchData) {
+    const db: any = { setMetadata: (_matchID: string, _serverMetadata: Server.MatchData) => {
         serverMetadata = _serverMetadata
-    }
+    }}
 
     expect(serverMetadata.players[+player1Metadata.playerID].credentials).toBeUndefined()
-    expect(authentication(matchID, player1Metadata, serverMetadata, store)).toBeTruthy();
+    expect(authentication(matchID, player1Metadata, serverMetadata, db)).toBeTruthy();
     expect(serverMetadata.players[+player1Metadata.playerID].credentials).toBe(player1Keys.publicKey)
-    expect(authentication(matchID, player2Metadata, serverMetadata, store)).toBeTruthy();
+    expect(authentication(matchID, player2Metadata, serverMetadata, db)).toBeTruthy();
   });

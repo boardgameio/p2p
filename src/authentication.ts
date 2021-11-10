@@ -1,6 +1,7 @@
 import { Server } from "boardgame.io";
 import nacl from "tweetnacl";
 import { decodeBase64, decodeUTF8, encodeBase64, encodeUTF8 } from "tweetnacl-util";
+import { P2PDB } from "./db";
 import { Client } from "./types";
 
 export function verifyMessage(message: string, publicKey: string): string | null {
@@ -15,7 +16,7 @@ export function signMessage(message: string, privateKey: string): string {
     return encodeBase64(nacl.sign(decodeUTF8(message), decodeBase64(privateKey)));
 }
 
-export function authentication(matchID: string, clientMetadata: Client['metadata'], serverMetadata: Server.MatchData, storeMetadata: (matchID: string, metadata: Server.MatchData) => void): boolean {
+export function authentication(matchID: string, clientMetadata: Client['metadata'], serverMetadata: Server.MatchData, db: P2PDB): boolean {
     const { playerID, credentials, message } = clientMetadata;
     const metadata = serverMetadata;
     // Spectators provide null/undefined playerIDs and don’t need authenticating.
@@ -28,19 +29,17 @@ export function authentication(matchID: string, clientMetadata: Client['metadata
     }
 
     let existingCredentials = metadata.players[+playerID].credentials;
-
-    const setPlayerMetadata = (playerMetadata: Partial<Server.PlayerMetadata>) => storeMetadata(matchID, {
-        ...metadata,
-        players: {
-            ...metadata.players,
-            [+playerID]: { ...metadata.players[+playerID], ...playerMetadata },
-        },
-    });
     
       // If no credentials exist yet for this player, store those
       // provided by the connecting client and authenticate.
       if (!existingCredentials && credentials) {
-        setPlayerMetadata({credentials})
+        db.setMetadata(matchID, {
+            ...metadata,
+            players: {
+                ...metadata.players,
+                [+playerID]: { ...metadata.players[+playerID], credentials },
+            },
+        });
         existingCredentials = credentials
       }
   
