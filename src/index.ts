@@ -79,8 +79,8 @@ class P2PTransport extends Transport {
   private game: Game;
   private emit?: (data: ClientAction) => void;
   private retryHandler: BackoffScheduler;
-  private publicKey: string;
-  private privateKey: string;
+  private publicKey?: string;
+  private privateKey?: string;
 
   constructor({
     isHost,
@@ -96,17 +96,12 @@ class P2PTransport extends Transport {
     this.game = opts.game;
     this.retryHandler = new BackoffScheduler();
 
-    let keyPair;
     if (opts.credentials) {
-      keyPair = nacl.sign.keyPair.fromSeed(
-        decodeUTF8(this.matchID + opts.credentials)
-      );
-    } else {
-      keyPair = nacl.sign.keyPair();
+      let seed = decodeUTF8(this.matchID + opts.credentials);
+      const { publicKey, secretKey } = nacl.sign.keyPair.fromSeed(seed);
+      this.publicKey = encodeBase64(publicKey);
+      this.privateKey = encodeBase64(secretKey);
     }
-
-    this.publicKey = encodeBase64(keyPair.publicKey);
-    this.privateKey = encodeBase64(keyPair.secretKey);
   }
 
   /** Synthesized peer ID for looking up this match’s host. */
@@ -124,9 +119,10 @@ class P2PTransport extends Transport {
   private get metadata(): Client["metadata"] {
     return {
       playerID: this.playerID,
-      credentials:
-        this.credentials == undefined ? this.publicKey : this.credentials,
-      message: signMessage(this.playerID || "", this.privateKey),
+      credentials: this.publicKey ? this.publicKey : this.credentials,
+      message: this.privateKey
+        ? signMessage(this.playerID || "", this.privateKey)
+        : undefined,
     };
   }
 
