@@ -85,7 +85,7 @@ export class P2PHost {
    */
   private authenticateClient(client: Client): boolean {
     const { metadata } = this.db.fetch(this.matchID);
-    return authentication(this.matchID, client.metadata, metadata, this.db)
+    return authentication(this.matchID, client.metadata, metadata, this.db);
   }
 
   /** Remove a client from the host’s registry. */

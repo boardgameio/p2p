@@ -1,9 +1,7 @@
 import Peer from "peerjs";
 import type { PeerJSOption } from "peerjs";
 import nacl from "tweetnacl";
-import {
-  encodeBase64
-} from "tweetnacl-util";
+import { encodeBase64 } from "tweetnacl-util";
 
 import { Transport } from "boardgame.io/internal";
 import type {
@@ -39,7 +37,7 @@ interface P2POpts {
   isHost?: boolean;
   peerOptions?: PeerJSOption;
   onError?: (error: PeerError) => void;
-  keyPair?: nacl.SignKeyPair
+  keyPair?: nacl.SignKeyPair;
 }
 
 /**
@@ -115,7 +113,11 @@ class P2PTransport extends Transport {
 
   /** Client metadata for this client instance. */
   private get metadata(): Client["metadata"] {
-    return { playerID: this.playerID, credentials: this.credentials == undefined ? this.publicKey: this.credentials };
+    return {
+      playerID: this.playerID,
+      credentials:
+        this.credentials == undefined ? this.publicKey : this.credentials,
+    };
   }
 
   connect(): void {
@@ -137,7 +139,10 @@ class P2PTransport extends Transport {
       // Register a local client for the host that applies updates directly to itself.
       host.registerClient({
         send: (data) => void this.notifyClient(data),
-        metadata: { ...this.metadata, message: signMessage(this.playerID || '', this.privateKey)}
+        metadata: {
+          ...this.metadata,
+          message: signMessage(this.playerID || "", this.privateKey),
+        },
       });
 
       // When a peer connects to the host, register it and set up event handlers.
@@ -164,7 +169,12 @@ class P2PTransport extends Transport {
   /** Establish a connection to a remote host from a peer client. */
   private connectToHost(): void {
     if (!this.peer) return;
-    const host = this.peer.connect(this.hostID, { metadata: { ...this.metadata, message: signMessage(this.playerID || '', this.privateKey)} });
+    const host = this.peer.connect(this.hostID, {
+      metadata: {
+        ...this.metadata,
+        message: signMessage(this.playerID || "", this.privateKey),
+      },
+    });
     // Forward actions to the host.
     this.emit = (action) => void host.send(action);
     // Emit sync action when a connection to the host is established.
