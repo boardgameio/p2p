@@ -101,7 +101,9 @@ class P2PTransport extends Transport {
 
     let keyPair;
     if(opts.credentials) {
-      keyPair = nacl.sign.keyPair.fromSeed(decodeUTF8(this.matchID + opts.credentials))
+      //ToDo implement a real sha256 not just sha512 and cut of the end!
+      const hash = nacl.hash(decodeUTF8(opts.credentials)).slice(0, 32);
+      keyPair = nacl.sign.keyPair.fromSeed(hash)
     } else {
       keyPair = nacl.sign.keyPair()
     }

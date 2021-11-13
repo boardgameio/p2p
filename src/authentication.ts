@@ -52,3 +52,7 @@ export function authentication(matchID: string, clientMetadata: Client['metadata
       }
       return false
 }
+
+export function generateCredentials() {
+    return encodeBase64(nacl.randomBytes(64));
+}
