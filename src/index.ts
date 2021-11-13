@@ -2,6 +2,7 @@ import Peer from "peerjs";
 import type { PeerJSOption } from "peerjs";
 import nacl from "tweetnacl";
 import {
+  decodeUTF8,
   encodeBase64
 } from "tweetnacl-util";
 
@@ -89,7 +90,6 @@ class P2PTransport extends Transport {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     onError = () => {},
     peerOptions = {},
-    keyPair = nacl.sign.keyPair(),
     ...opts
   }: TransportOpts & P2POpts) {
     super(opts);
@@ -98,6 +98,14 @@ class P2PTransport extends Transport {
     this.peerOptions = peerOptions;
     this.game = opts.game;
     this.retryHandler = new BackoffScheduler();
+
+    let keyPair;
+    if(opts.credentials) {
+      keyPair = nacl.sign.keyPair.fromSeed(decodeUTF8(this.matchID + opts.credentials))
+    } else {
+      keyPair = nacl.sign.keyPair()
+    }
+
     this.publicKey = encodeBase64(keyPair.publicKey);
     this.privateKey = encodeBase64(keyPair.secretKey);
   }
@@ -115,7 +123,7 @@ class P2PTransport extends Transport {
 
   /** Client metadata for this client instance. */
   private get metadata(): Client["metadata"] {
-    return { playerID: this.playerID, credentials: this.credentials == undefined ? this.publicKey: this.credentials };
+    return { playerID: this.playerID, credentials: this.publicKey };
   }
 
   connect(): void {
