@@ -117,6 +117,7 @@ class P2PTransport extends Transport {
       playerID: this.playerID,
       credentials:
         this.credentials == undefined ? this.publicKey : this.credentials,
+      message: signMessage(this.playerID || "", this.privateKey),
     };
   }
 
@@ -139,10 +140,7 @@ class P2PTransport extends Transport {
       // Register a local client for the host that applies updates directly to itself.
       host.registerClient({
         send: (data) => void this.notifyClient(data),
-        metadata: {
-          ...this.metadata,
-          message: signMessage(this.playerID || "", this.privateKey),
-        },
+        metadata: this.metadata,
       });
 
       // When a peer connects to the host, register it and set up event handlers.
@@ -170,10 +168,7 @@ class P2PTransport extends Transport {
   private connectToHost(): void {
     if (!this.peer) return;
     const host = this.peer.connect(this.hostID, {
-      metadata: {
-        ...this.metadata,
-        message: signMessage(this.playerID || "", this.privateKey),
-      },
+      metadata: this.metadata,
     });
     // Forward actions to the host.
     this.emit = (action) => void host.send(action);
