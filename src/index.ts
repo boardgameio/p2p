@@ -100,7 +100,7 @@ class P2PTransport extends Transport {
     this.retryHandler = new BackoffScheduler();
 
     if (opts.credentials) {
-      //ToDo implement a real sha256 not just sha512 and cut of the end!
+      // TODO: implement a real sha256 not just sha512 and cut of the end!
       const hash = nacl.hash(decodeUTF8(opts.credentials)).slice(0, 32);
       const { publicKey, secretKey } = nacl.sign.keyPair.fromSeed(hash);
       this.publicKey = encodeBase64(publicKey);
