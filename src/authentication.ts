@@ -27,7 +27,7 @@ export function signMessage(message: string, privateKey: string): string {
   return encodeBase64(nacl.sign(decodeUTF8(message), decodeBase64(privateKey)));
 }
 
-export function authentication(
+export function authenticate(
   matchID: string,
   clientMetadata: Client["metadata"],
   serverMetadata: Server.MatchData,

@@ -3,7 +3,7 @@ import { Master } from "boardgame.io/master";
 import type { Game } from "boardgame.io";
 import { P2PDB } from "./db";
 import type { Client, ClientAction } from "./types";
-import { authentication } from "./authentication";
+import { authenticate } from "./authentication";
 
 /**
  * Peer-to-peer host class, which runs a local `Master` instance
@@ -85,7 +85,7 @@ export class P2PHost {
    */
   private authenticateClient(client: Client): boolean {
     const { metadata } = this.db.fetch(this.matchID);
-    return authentication(this.matchID, client.metadata, metadata, this.db);
+    return authenticate(this.matchID, client.metadata, metadata, this.db);
   }
 
   /** Remove a client from the host’s registry. */
