@@ -15,6 +15,10 @@ import { P2PHost } from "./host";
 import type { ClientAction, Client } from "./types";
 import { signMessage } from "./authentication";
 
+export function generateCredentials(): string {
+  return encodeBase64(nacl.randomBytes(64));
+}
+
 type TransportOpts = ConstructorParameters<typeof Transport>[0];
 
 type PeerError = Error & {
