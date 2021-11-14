@@ -1,7 +1,7 @@
 import { Server } from "boardgame.io";
 import nacl from "tweetnacl";
 import { encodeBase64 } from "tweetnacl-util";
-import { authentication, signMessage } from "./authentication";
+import { authenticate, signMessage } from "./authentication";
 import { Client } from "./types";
 
 const matchID = "TestMatch";
@@ -34,7 +34,7 @@ test("PlayerID not registered", () => {
   };
 
   expect(
-    authentication(matchID, player1Metadata, serverMetadata, db)
+    authenticate(matchID, player1Metadata, serverMetadata, db)
   ).toBeTruthy();
 });
 
@@ -55,7 +55,7 @@ test("PlayerID null", () => {
   };
 
   expect(
-    authentication(matchID, player1Metadata, serverMetadata, db)
+    authenticate(matchID, player1Metadata, serverMetadata, db)
   ).toBeTruthy();
 });
 
@@ -93,13 +93,13 @@ test("Player1 is registered and Player2 sends wrong message", () => {
     serverMetadata.players[+player1Metadata.playerID].credentials
   ).toBeUndefined();
   expect(
-    authentication(matchID, player1Metadata, serverMetadata, db)
+    authenticate(matchID, player1Metadata, serverMetadata, db)
   ).toBeTruthy();
   expect(serverMetadata.players[+player1Metadata.playerID].credentials).toBe(
     player1Keys.publicKey
   );
   expect(
-    authentication(matchID, player2Metadata, serverMetadata, db)
+    authenticate(matchID, player2Metadata, serverMetadata, db)
   ).toBeFalsy();
 });
 
@@ -138,12 +138,12 @@ test("Player1 is registered and Player2 sends wrong message", () => {
     serverMetadata.players[+player1Metadata.playerID].credentials
   ).toBeUndefined();
   expect(
-    authentication(matchID, player1Metadata, serverMetadata, db)
+    authenticate(matchID, player1Metadata, serverMetadata, db)
   ).toBeTruthy();
   expect(serverMetadata.players[+player1Metadata.playerID].credentials).toBe(
     player1Keys.publicKey
   );
   expect(
-    authentication(matchID, player2Metadata, serverMetadata, db)
+    authenticate(matchID, player2Metadata, serverMetadata, db)
   ).toBeTruthy();
 });
