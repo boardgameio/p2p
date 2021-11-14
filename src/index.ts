@@ -41,7 +41,6 @@ interface P2POpts {
   isHost?: boolean;
   peerOptions?: PeerJSOption;
   onError?: (error: PeerError) => void;
-  keyPair?: nacl.SignKeyPair;
 }
 
 /**
