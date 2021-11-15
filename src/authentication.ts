@@ -51,11 +51,15 @@ export function authenticate(
     return true;
   }
 
-  let existingCredentials = metadata.players[+playerID].credentials;
+  const existingCredentials = metadata.players[+playerID].credentials;
+
+  const isMessageValid = credentials
+    ? !!message && verifyMessage(message, credentials)
+    : false;
 
   // If no credentials exist yet for this player, store those
   // provided by the connecting client and authenticate.
-  if (!existingCredentials && credentials) {
+  if (!existingCredentials && isMessageValid) {
     db.setMetadata(matchID, {
       ...metadata,
       players: {
@@ -63,7 +67,7 @@ export function authenticate(
         [+playerID]: { ...metadata.players[+playerID], credentials },
       },
     });
-    existingCredentials = credentials;
+    return true;
   }
 
   // If credentials are neither provided nor stored, authenticate.
@@ -71,10 +75,9 @@ export function authenticate(
 
   // If credentials match, authenticate.
   if (
-    message &&
     existingCredentials &&
     existingCredentials === credentials &&
-    verifyMessage(message, existingCredentials)
+    isMessageValid
   ) {
     return true;
   }
