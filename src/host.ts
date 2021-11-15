@@ -21,7 +21,7 @@ export class P2PHost {
     matchID,
   }: {
     game: Game;
-    numPlayers: number;
+    numPlayers?: number;
     matchID: string;
   }) {
     this.matchID = matchID;
