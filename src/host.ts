@@ -84,8 +84,7 @@ export class P2PHost {
    * @returns `true` if the client was successfully authenticated, `false` if it wasn’t.
    */
   private authenticateClient(client: Client): boolean {
-    const { metadata } = this.db.fetch(this.matchID);
-    return authenticate(this.matchID, client.metadata, metadata, this.db);
+    return authenticate(this.matchID, client.metadata, this.db);
   }
 
   /** Remove a client from the host’s registry. */

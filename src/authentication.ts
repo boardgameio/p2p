@@ -1,4 +1,3 @@
-import type { Server } from "boardgame.io";
 import { sign } from "tweetnacl";
 import {
   decodeBase64,
@@ -30,11 +29,10 @@ export function signMessage(message: string, privateKey: string): string {
 export function authenticate(
   matchID: string,
   clientMetadata: Client["metadata"],
-  serverMetadata: Server.MatchData,
   db: P2PDB
 ): boolean {
   const { playerID, credentials, message } = clientMetadata;
-  const metadata = serverMetadata;
+  const { metadata } = db.fetch(matchID);
   // Spectators provide null/undefined playerIDs and don’t need authenticating.
   if (
     playerID === null ||
