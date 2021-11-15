@@ -71,6 +71,21 @@ You can configure the peer-to-peer transport by passing an optional object. It c
 
 By default, any client can connect with any `playerID` and successfully submit moves as that player. If you want to avoid this, you must set `credentials` on your boardgame.io clients. The first client to connect with a given `playerID` will authenticate and all future connections for that `playerID` must also provide the same `credentials` to successfully connect.
 
+The transport uses [public-key encryption][pk], deterministically generating keys from the value of `credentials`. For optimal security, use the included helper method to generate credentials:
+
+```js
+import { Client } from 'boardgame.io/client';
+import { generateCredentials } from '@boardgame.io/p2p';
+
+const credentials = generateCredentials();
+
+const peerClient = Client({
+  multiplayer: P2P(),
+  credentials,
+  // ...
+});
+```
+
 ## Notes
 
 ### What does experimental mean?
@@ -109,5 +124,6 @@ The code in this repository is provided under [the MIT License](LICENSE).
 [poc]: https://opencollective.com/peer
 [pje]: https://peerjs.com/docs.html#peeron-error
 [pjo]: https://peerjs.com/docs.html#peer-options
+[pk]: https://en.wikipedia.org/wiki/Public-key_cryptography
 [newissue]: https://github.com/boardgameio/p2p/issues/new/choose
 [coc]: CODE_OF_CONDUCT.md
