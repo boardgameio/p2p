@@ -1,6 +1,9 @@
 # @boardgame.io/p2p
 
-[![npm version](https://badge.fury.io/js/@boardgame.io%2Fp2p.svg)](https://www.npmjs.com/package/@boardgame.io/p2p) [![Gitter](https://badges.gitter.im/boardgame-io.svg)](https://gitter.im/boardgame-io)
+[![npm version](https://badge.fury.io/js/@boardgame.io%2Fp2p.svg)](https://www.npmjs.com/package/@boardgame.io/p2p)
+[![Unit Tests](https://github.com/boardgameio/p2p/actions/workflows/unit.yml/badge.svg)](https://github.com/boardgameio/p2p/actions/workflows/unit.yml)
+[![Coverage Status](https://coveralls.io/repos/github/boardgameio/p2p/badge.svg?branch=latest)](https://coveralls.io/github/boardgameio/p2p?branch=latest)
+[![Gitter](https://badges.gitter.im/boardgame-io.svg)](https://gitter.im/boardgame-io)
 
 > Experimental peer-to-peer multiplayer transport for [boardgame.io][bgio]
 
