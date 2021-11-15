@@ -78,7 +78,7 @@ The transport uses [public-key encryption][pk], deterministically generating key
 
 ```js
 import { Client } from 'boardgame.io/client';
-import { generateCredentials } from '@boardgame.io/p2p';
+import { P2P, generateCredentials } from '@boardgame.io/p2p';
 
 const credentials = generateCredentials();
 
