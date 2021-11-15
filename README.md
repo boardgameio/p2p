@@ -61,7 +61,7 @@ You can configure the peer-to-peer transport by passing an optional object. It c
   - **type:** `(error: Error) => void`
   - **default:** `undefined`
 
-  Callback to subscribe to subscribe to [PeerJS’s `'error'` event][pje].
+  Callback to subscribe to [PeerJS’s `'error'` event][pje].
 
 - #### `peerOptions`
 
