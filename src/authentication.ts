@@ -1,5 +1,10 @@
 import { sign } from "tweetnacl";
-import { decodeBase64, decodeUTF8, encodeBase64 } from "tweetnacl-util";
+import {
+  decodeBase64,
+  decodeUTF8,
+  encodeBase64,
+  encodeUTF8,
+} from "tweetnacl-util";
 import type { P2PDB } from "./db";
 import type { Client } from "./types";
 
@@ -7,15 +12,20 @@ import type { Client } from "./types";
  * Verify that a signed message was signed by the given public key.
  * @param message Message signed by the client’s private key encoded as a base64 string.
  * @param publicKey Client’s public key encoded as a base64 string.
+ * @param playerID playerID that the message is expected to decrypt to.
  * @returns `true` if the message is valid, `false` otherwise.
  */
-export function verifyMessage(message: string, publicKey: string): boolean {
+export function verifyMessage(
+  message: string,
+  publicKey: string,
+  playerID: string
+): boolean {
   try {
     const verifedMessage = sign.open(
       decodeBase64(message),
       decodeBase64(publicKey)
     );
-    return verifedMessage !== null;
+    return verifedMessage !== null && encodeUTF8(verifedMessage) === playerID;
   } catch (error) {
     return false;
   }
@@ -54,7 +64,7 @@ export function authenticate(
   const existingCredentials = metadata.players[+playerID].credentials;
 
   const isMessageValid = credentials
-    ? !!message && verifyMessage(message, credentials)
+    ? !!message && verifyMessage(message, credentials, playerID)
     : false;
 
   // If no credentials exist yet for this player, store those

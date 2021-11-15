@@ -124,9 +124,10 @@ class P2PTransport extends Transport {
     return {
       playerID: this.playerID,
       credentials: this.publicKey ? this.publicKey : this.credentials,
-      message: this.privateKey
-        ? signMessage(this.playerID || "", this.privateKey)
-        : undefined,
+      message:
+        this.playerID && this.privateKey
+          ? signMessage(this.playerID, this.privateKey)
+          : undefined,
     };
   }
 

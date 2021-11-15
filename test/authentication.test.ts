@@ -57,7 +57,7 @@ describe("with public-key encryption", () => {
     const player0Metadata: Client["metadata"] & { playerID: string } = {
       playerID: "0",
       credentials: player0Keys.publicKey,
-      message: signMessage("test", player0Keys.privateKey),
+      message: signMessage("0", player0Keys.privateKey),
     };
 
     expect(authenticate(matchID, player0Metadata, db)).toBe(true);
@@ -72,7 +72,7 @@ describe("with public-key encryption", () => {
     const player0Metadata: Client["metadata"] & { playerID: string } = {
       playerID: "0",
       credentials: player0Keys.publicKey,
-      message: signMessage("test", player0Keys.privateKey),
+      message: signMessage("0", player0Keys.privateKey),
     };
 
     expect(authenticate(matchID, player0Metadata, db)).toBe(true);
@@ -82,7 +82,7 @@ describe("with public-key encryption", () => {
 
     const newMetadata = {
       ...player0Metadata,
-      message: signMessage("new-connection", player0Keys.privateKey),
+      message: signMessage("0", player0Keys.privateKey),
     };
     expect(authenticate(matchID, newMetadata, db)).toBe(true);
   });
@@ -115,14 +115,14 @@ describe("with public-key encryption", () => {
     const player0Metadata = {
       playerID: "0",
       credentials: player0Keys.publicKey,
-      message: signMessage("Test", player0Keys.privateKey),
+      message: signMessage("0", player0Keys.privateKey),
     };
 
     const player1Keys = keys();
     const player1Metadata: Client["metadata"] & { playerID: string } = {
       playerID: "1",
       credentials: player1Keys.publicKey,
-      message: signMessage("Test", player1Keys.privateKey),
+      message: signMessage("1", player1Keys.privateKey),
     };
 
     // Player 0 authenticates successfully and their public key is stored.
