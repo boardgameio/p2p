@@ -1,8 +1,8 @@
 import { Server } from "boardgame.io";
 import nacl from "tweetnacl";
 import { encodeBase64 } from "tweetnacl-util";
-import { authenticate, signMessage } from "./authentication";
-import { Client } from "./types";
+import { authenticate, signMessage } from "../src/authentication";
+import { Client } from "../src/types";
 
 const matchID = "TestMatch";
 const defaultMetadata = { gameName: "TestGame", createdAt: 0, updatedAt: 0 };

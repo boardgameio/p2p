@@ -1,6 +1,5 @@
 {
   "extends": "../tsconfig.json",
-  "exclude": ["**/*.test.ts"],
   "compilerOptions": {
     "composite": true,
     "tsBuildInfoFile": "../.tscache/src.tsbuildinfo"
