@@ -1,4 +1,4 @@
-import { Server } from "boardgame.io";
+import type { Server } from "boardgame.io";
 import { sign } from "tweetnacl";
 import {
   decodeBase64,
@@ -6,8 +6,8 @@ import {
   encodeBase64,
   encodeUTF8,
 } from "tweetnacl-util";
-import { P2PDB } from "./db";
-import { Client } from "./types";
+import type { P2PDB } from "./db";
+import type { Client } from "./types";
 
 export function verifyMessage(
   message: string,
