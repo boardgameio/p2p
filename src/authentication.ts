@@ -15,7 +15,7 @@ import type { Client } from "./types";
  * @param playerID playerID that the message is expected to decrypt to.
  * @returns `true` if the message is valid, `false` otherwise.
  */
-export function verifyMessage(
+function verifyMessage(
   message: string,
   publicKey: string,
   playerID: string
