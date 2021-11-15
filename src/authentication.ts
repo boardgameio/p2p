@@ -21,10 +21,20 @@ export function verifyMessage(message: string, publicKey: string): boolean {
   }
 }
 
+/**
+ * Sign and encode a message string with the given private key.
+ * @param message utf8 string to be signed.
+ * @param privateKey base64-encoded private key to sign the message with.
+ * @returns Signed message encoded as a base64 string.
+ */
 export function signMessage(message: string, privateKey: string): string {
   return encodeBase64(sign(decodeUTF8(message), decodeBase64(privateKey)));
 }
 
+/**
+ * Authenticate a client by comparing its metadata with the credentials
+ * stored in the database for the given match.
+ */
 export function authenticate(
   matchID: string,
   clientMetadata: Client["metadata"],
