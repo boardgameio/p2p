@@ -32,8 +32,8 @@
     "dist/*"
   ],
   "scripts": {
-    "prettier:check": "prettier --list-different \"{src,test}/**/*.ts\"",
-    "prettier:write": "prettier --write \"{src,test}/**/*.ts\"",
+    "prettier:check": "prettier --list-different \"src/**/*.ts\"",
+    "prettier:write": "prettier --write \"src/**/*.ts\"",
     "prebuild": "npm run prettier:check",
     "build": "tsc -b src",
     "prerelease": "npm run test && npm run build",
