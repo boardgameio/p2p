@@ -1,6 +1,6 @@
 import Peer from "peerjs";
 import type { PeerJSOption } from "peerjs";
-import nacl from "tweetnacl";
+import { sign, hash, randomBytes } from "tweetnacl";
 import { decodeUTF8, encodeBase64 } from "tweetnacl-util";
 
 import { Transport } from "boardgame.io/internal";
@@ -16,7 +16,7 @@ import type { ClientAction, Client } from "./types";
 import { signMessage } from "./authentication";
 
 export function generateCredentials(): string {
-  return encodeBase64(nacl.randomBytes(64));
+  return encodeBase64(randomBytes(64));
 }
 
 type TransportOpts = ConstructorParameters<typeof Transport>[0];
@@ -101,8 +101,8 @@ class P2PTransport extends Transport {
 
     if (opts.credentials) {
       // TODO: implement a real sha256 not just sha512 and cut of the end!
-      const hash = nacl.hash(decodeUTF8(opts.credentials)).slice(0, 32);
-      const { publicKey, secretKey } = nacl.sign.keyPair.fromSeed(hash);
+      const seed = hash(decodeUTF8(opts.credentials)).slice(0, 32);
+      const { publicKey, secretKey } = sign.keyPair.fromSeed(seed);
       this.publicKey = encodeBase64(publicKey);
       this.privateKey = encodeBase64(secretKey);
     }

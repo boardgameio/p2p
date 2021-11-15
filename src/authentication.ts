@@ -1,5 +1,5 @@
 import { Server } from "boardgame.io";
-import nacl from "tweetnacl";
+import { sign } from "tweetnacl";
 import {
   decodeBase64,
   decodeUTF8,
@@ -13,7 +13,7 @@ export function verifyMessage(
   message: string,
   publicKey: string
 ): string | null {
-  const verifedMessage = nacl.sign.open(
+  const verifedMessage = sign.open(
     decodeBase64(message),
     decodeBase64(publicKey)
   );
@@ -24,7 +24,7 @@ export function verifyMessage(
 }
 
 export function signMessage(message: string, privateKey: string): string {
-  return encodeBase64(nacl.sign(decodeUTF8(message), decodeBase64(privateKey)));
+  return encodeBase64(sign(decodeUTF8(message), decodeBase64(privateKey)));
 }
 
 export function authenticate(
