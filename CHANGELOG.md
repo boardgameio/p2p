@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.4.0](https://github.com/boardgameio/p2p/compare/v0.3.0...v0.4.0) (2021-11-15)
+
+
+### Features
+
+* Use private key authentication ([#10](https://github.com/boardgameio/p2p/issues/10)) ([6f6176d](https://github.com/boardgameio/p2p/commit/6f6176d8f17c900dccdc468e9a51c002cfadb7ef))
+
+
+### Bug Fixes
+
+* **host:** Correctly type host options ([d09840f](https://github.com/boardgameio/p2p/commit/d09840f58b7b748afb67f04109227a88c6fd3db9))
+
 ## [0.3.0](https://github.com/boardgameio/p2p/compare/v0.2.1...v0.3.0) (2021-10-11)
 
 
