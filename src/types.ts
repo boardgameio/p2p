@@ -8,6 +8,7 @@ export interface Client {
   metadata: {
     playerID: PlayerID | null;
     credentials: string | undefined;
+    message?: string;
   };
 }
 

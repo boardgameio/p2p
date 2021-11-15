@@ -1,5 +1,7 @@
 import Peer from "peerjs";
 import type { PeerJSOption } from "peerjs";
+import { sign, hash, randomBytes } from "tweetnacl";
+import { decodeUTF8, encodeBase64 } from "tweetnacl-util";
 
 import { Transport } from "boardgame.io/internal";
 import type {
@@ -11,6 +13,11 @@ import type {
 
 import { P2PHost } from "./host";
 import type { ClientAction, Client } from "./types";
+import { signMessage } from "./authentication";
+
+export function generateCredentials(): string {
+  return encodeBase64(randomBytes(64));
+}
 
 type TransportOpts = ConstructorParameters<typeof Transport>[0];
 
@@ -75,6 +82,8 @@ class P2PTransport extends Transport {
   private game: Game;
   private emit?: (data: ClientAction) => void;
   private retryHandler: BackoffScheduler;
+  private publicKey?: string;
+  private privateKey?: string;
 
   constructor({
     isHost,
@@ -89,6 +98,14 @@ class P2PTransport extends Transport {
     this.peerOptions = peerOptions;
     this.game = opts.game;
     this.retryHandler = new BackoffScheduler();
+
+    if (opts.credentials) {
+      // TODO: implement a real sha256 not just sha512 and cut of the end!
+      const seed = hash(decodeUTF8(opts.credentials)).slice(0, 32);
+      const { publicKey, secretKey } = sign.keyPair.fromSeed(seed);
+      this.publicKey = encodeBase64(publicKey);
+      this.privateKey = encodeBase64(secretKey);
+    }
   }
 
   /** Synthesized peer ID for looking up this match’s host. */
@@ -104,7 +121,14 @@ class P2PTransport extends Transport {
 
   /** Client metadata for this client instance. */
   private get metadata(): Client["metadata"] {
-    return { playerID: this.playerID, credentials: this.credentials };
+    return {
+      playerID: this.playerID,
+      credentials: this.publicKey ? this.publicKey : this.credentials,
+      message:
+        this.playerID && this.privateKey
+          ? signMessage(this.playerID, this.privateKey)
+          : undefined,
+    };
   }
 
   connect(): void {
