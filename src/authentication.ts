@@ -1,25 +1,24 @@
 import { sign } from "tweetnacl";
-import {
-  decodeBase64,
-  decodeUTF8,
-  encodeBase64,
-  encodeUTF8,
-} from "tweetnacl-util";
+import { decodeBase64, decodeUTF8, encodeBase64 } from "tweetnacl-util";
 import type { P2PDB } from "./db";
 import type { Client } from "./types";
 
-export function verifyMessage(
-  message: string,
-  publicKey: string
-): string | null {
-  const verifedMessage = sign.open(
-    decodeBase64(message),
-    decodeBase64(publicKey)
-  );
-  if (verifedMessage === null) {
-    return null;
+/**
+ * Verify that a signed message was signed by the given public key.
+ * @param message Message signed by the client’s private key encoded as a base64 string.
+ * @param publicKey Client’s public key encoded as a base64 string.
+ * @returns `true` if the message is valid, `false` otherwise.
+ */
+export function verifyMessage(message: string, publicKey: string): boolean {
+  try {
+    const verifedMessage = sign.open(
+      decodeBase64(message),
+      decodeBase64(publicKey)
+    );
+    return verifedMessage !== null;
+  } catch (error) {
+    return false;
   }
-  return encodeUTF8(verifedMessage);
 }
 
 export function signMessage(message: string, privateKey: string): string {
@@ -65,7 +64,7 @@ export function authenticate(
     message &&
     existingCredentials &&
     existingCredentials === credentials &&
-    verifyMessage(message, existingCredentials) !== null
+    verifyMessage(message, existingCredentials)
   ) {
     return true;
   }
