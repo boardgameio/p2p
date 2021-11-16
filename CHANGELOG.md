@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.1](https://github.com/boardgameio/p2p/compare/v0.4.0...v0.4.1) (2021-11-16)
+
+
+### Bug Fixes
+
+* Keep `credentials` & signing keys in sync ([264c6dc](https://github.com/boardgameio/p2p/commit/264c6dccc6620f5dac4254305edbf040136c0ef6))
+
 ## [0.4.0](https://github.com/boardgameio/p2p/compare/v0.3.0...v0.4.0) (2021-11-15)
 
 
