@@ -8,10 +8,10 @@ import { Sync } from "boardgame.io/internal";
  * persistence across sessions using IndexedDB or similar.
  */
 export class P2PDB extends Sync {
-  initialState: Map<string, State> = new Map();
-  state: Map<string, State> = new Map();
-  log: Map<string, LogEntry[]> = new Map();
-  metadata: Map<string, Server.MatchData> = new Map();
+  private initialState: Map<string, State> = new Map();
+  private state: Map<string, State> = new Map();
+  private log: Map<string, LogEntry[]> = new Map();
+  private metadata: Map<string, Server.MatchData> = new Map();
 
   connect(): void {
     // Required by parent class interface.
