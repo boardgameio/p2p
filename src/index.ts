@@ -80,7 +80,6 @@ class P2PTransport extends Transport {
   private game: Game;
   private emit?: (data: ClientAction) => void;
   private retryHandler: BackoffScheduler;
-  private publicKey?: string;
   private privateKey?: string;
 
   constructor({
@@ -96,14 +95,7 @@ class P2PTransport extends Transport {
     this.peerOptions = peerOptions;
     this.game = opts.game;
     this.retryHandler = new BackoffScheduler();
-
-    if (opts.credentials) {
-      // TODO: implement a real sha256 not just sha512 and cut of the end!
-      const seed = hash(decodeUTF8(opts.credentials)).slice(0, 32);
-      const { publicKey, secretKey } = sign.keyPair.fromSeed(seed);
-      this.publicKey = encodeBase64(publicKey);
-      this.privateKey = encodeBase64(secretKey);
-    }
+    this.setCredentials(opts.credentials);
   }
 
   /** Synthesized peer ID for looking up this match’s host. */
@@ -117,11 +109,24 @@ class P2PTransport extends Transport {
     );
   }
 
+  /** Keep credentials and encryption keys in sync. */
+  private setCredentials(credentials: string | undefined): void {
+    if (!credentials) {
+      this.privateKey = this.credentials = undefined;
+      return;
+    }
+    // TODO: implement a real sha256 not just sha512 and cut of the end!
+    const seed = hash(decodeUTF8(credentials)).slice(0, 32);
+    const { publicKey, secretKey } = sign.keyPair.fromSeed(seed);
+    this.credentials = encodeBase64(publicKey);
+    this.privateKey = encodeBase64(secretKey);
+  }
+
   /** Client metadata for this client instance. */
   private get metadata(): Client["metadata"] {
     return {
       playerID: this.playerID,
-      credentials: this.publicKey ? this.publicKey : this.credentials,
+      credentials: this.credentials,
       message:
         this.playerID && this.privateKey
           ? signMessage(this.playerID, this.privateKey)
@@ -235,7 +240,7 @@ class P2PTransport extends Transport {
   }
 
   updateCredentials(credentials?: string): void {
-    this.credentials = credentials;
+    this.setCredentials(credentials);
     this.reconnect();
   }
 }
