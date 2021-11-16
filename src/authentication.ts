@@ -8,6 +8,7 @@ import {
 import type { P2PDB } from "./db";
 import type { Client } from "./types";
 
+/** Generate secure credentials to pass to boardgame.io. */
 export function generateCredentials(): string {
   return encodeBase64(randomBytes(64));
 }
