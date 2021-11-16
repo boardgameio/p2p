@@ -2,6 +2,7 @@ import type { Server, State } from "boardgame.io";
 import nacl from "tweetnacl";
 import { encodeBase64 } from "tweetnacl-util";
 import { authenticate, signMessage } from "../src/authentication";
+import { generateCredentials } from "../src";
 import { P2PDB } from "../src/db";
 import { Client } from "../src/types";
 
@@ -136,5 +137,13 @@ describe("with public-key encryption", () => {
     expect(
       db.fetch(matchID).metadata.players[+player1Metadata.playerID].credentials
     ).toBe(player1Keys.publicKey);
+  });
+});
+
+describe("generateCredentials", () => {
+  test("generates a random string", () => {
+    const credentials = generateCredentials();
+    expect(typeof credentials).toBe("string");
+    expect(credentials.length).toBeGreaterThan(0);
   });
 });
