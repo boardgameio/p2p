@@ -1,4 +1,4 @@
-import { sign } from "tweetnacl";
+import { sign, randomBytes } from "tweetnacl";
 import {
   decodeBase64,
   decodeUTF8,
@@ -7,6 +7,10 @@ import {
 } from "tweetnacl-util";
 import type { P2PDB } from "./db";
 import type { Client } from "./types";
+
+export function generateCredentials(): string {
+  return encodeBase64(randomBytes(64));
+}
 
 /**
  * Verify that a signed message was signed by the given public key.

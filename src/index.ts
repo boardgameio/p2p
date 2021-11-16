@@ -1,6 +1,6 @@
 import Peer from "peerjs";
 import type { PeerJSOption } from "peerjs";
-import { sign, hash, randomBytes } from "tweetnacl";
+import { sign, hash } from "tweetnacl";
 import { decodeUTF8, encodeBase64 } from "tweetnacl-util";
 
 import { Transport } from "boardgame.io/internal";
@@ -15,9 +15,7 @@ import { P2PHost } from "./host";
 import type { ClientAction, Client } from "./types";
 import { signMessage } from "./authentication";
 
-export function generateCredentials(): string {
-  return encodeBase64(randomBytes(64));
-}
+export { generateCredentials } from "./authentication";
 
 type TransportOpts = ConstructorParameters<typeof Transport>[0];
 
