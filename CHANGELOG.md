@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.2](https://github.com/boardgameio/p2p/compare/v0.4.1...v0.4.2) (2022-11-19)
+
+
+### Bug Fixes
+
+* send close event on window close ([#198](https://github.com/boardgameio/p2p/issues/198)) ([57977a8](https://github.com/boardgameio/p2p/commit/57977a8fed2fea290d9141fa83828b8e9dc8db85))
+
 ### [0.4.1](https://github.com/boardgameio/p2p/compare/v0.4.0...v0.4.1) (2021-11-16)
 
 
