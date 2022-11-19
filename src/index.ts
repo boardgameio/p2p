@@ -18,6 +18,7 @@ import { signMessage } from "./authentication";
 export { generateCredentials } from "./authentication";
 
 type TransportOpts = ConstructorParameters<typeof Transport>[0];
+type TransportData = Parameters<Transport["notifyClient"]>[0];
 
 type PeerError = Error & {
   type:
@@ -136,7 +137,7 @@ class P2PTransport extends Transport {
 
   connect(): void {
     this.peer = new Peer(
-      this.isHost ? this.hostID : undefined,
+      (this.isHost ? this.hostID : undefined) as string,
       this.peerOptions
     );
 
@@ -152,23 +153,26 @@ class P2PTransport extends Transport {
 
       // Register a local client for the host that applies updates directly to itself.
       host.registerClient({
-        send: (data) => void this.notifyClient(data),
+        send: (data: TransportData) => void this.notifyClient(data),
         metadata: this.metadata,
       });
 
       // When a peer connects to the host, register it and set up event handlers.
       this.peer.on("connection", (client) => {
         host.registerClient(client);
-        client.on("data", (data) => void host.processAction(data));
+        client.on("data", (data) => {
+          host.processAction(data as ClientAction);
+        });
         client.on("close", () => void host.unregisterClient(client));
         window && window.addEventListener("beforeunload", () => client.close());
       });
-      this.peer.on("error", this.onError);
+      this.peer.on("error", (err) => this.onError(err as PeerError));
 
       this.onConnect();
     } else {
       this.peer.on("open", () => void this.connectToHost());
-      this.peer.on("error", (error: PeerError) => {
+      this.peer.on("error", (err) => {
+        const error = err as PeerError;
         if (error.type === "network" || error.type === "peer-unavailable") {
           this.retryHandler.schedule(() => void this.connectToHost());
         } else {
@@ -187,7 +191,7 @@ class P2PTransport extends Transport {
     // Emit sync action when a connection to the host is established.
     host.on("open", () => void this.onConnect());
     // Apply updates received from the host.
-    host.on("data", (data) => void this.notifyClient(data));
+    host.on("data", (data) => void this.notifyClient(data as TransportData));
     window && window.addEventListener("beforeunload", () => host.close());
   }
 
