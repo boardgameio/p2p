@@ -161,6 +161,7 @@ class P2PTransport extends Transport {
         host.registerClient(client);
         client.on("data", (data) => void host.processAction(data));
         client.on("close", () => void host.unregisterClient(client));
+        window && window.addEventListener("beforeunload", () => client.close());
       });
       this.peer.on("error", this.onError);
 
@@ -187,6 +188,7 @@ class P2PTransport extends Transport {
     host.on("open", () => void this.onConnect());
     // Apply updates received from the host.
     host.on("data", (data) => void this.notifyClient(data));
+    window && window.addEventListener("beforeunload", () => host.close());
   }
 
   /** Execute tasks once the connection to a remote or local host has been established. */
