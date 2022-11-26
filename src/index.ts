@@ -105,9 +105,9 @@ class P2PTransport extends Transport {
     // Sanitize host ID for PeerJS: remove any non-alphanumeric characters, trim
     // leading/trailing hyphens/underscores and collapse consecutive hyphens/underscores.
     return `boardgameio-${this.gameName}-matchid-${this.matchID}`.replace(
-      /([^A-Za-z0-9_-]|^[_-]+|[_-]+$|(?<=[_-])[_-]+)/g,
+      /([^A-Za-z0-9_-]|^[_-]+|[_-]+$)/g, 
       ""
-    );
+    ).replace(/([_-])[_-]+/g, "$1");
   }
 
   /** Keep credentials and encryption keys in sync. */
