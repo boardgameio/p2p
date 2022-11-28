@@ -16,4 +16,15 @@ describe("P2P", () => {
       client.stop();
     }).not.toThrow();
   });
+
+  test("will sanitize matchid for peerjs", () => {
+    const game = { name: "test" };
+    const matchID = "-_-ABC---def01%2&3_-_";
+    const multiplayer = P2P();
+    const client = Client({ game, matchID, multiplayer });
+    client.start();
+    expect((client as any).transport.hostID).toBe(
+      "boardgameio-test-matchid-ABC-def0123"
+    );
+  });
 });
