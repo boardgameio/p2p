@@ -37,6 +37,8 @@ type PeerError = Error & {
 };
 
 interface P2POpts {
+  playerName?: string;
+  playerData?: any;
   isHost?: boolean;
   peerOptions?: PeerJSOption;
   onError?: (error: PeerError) => void;
@@ -82,6 +84,8 @@ class P2PTransport extends Transport {
   private emit?: (data: ClientAction) => void;
   private retryHandler: BackoffScheduler;
   private privateKey?: string;
+  private playerName?: string;
+  private playerData?: any;
 
   constructor({
     isHost,
@@ -97,6 +101,8 @@ class P2PTransport extends Transport {
     this.game = opts.game;
     this.retryHandler = new BackoffScheduler();
     this.setCredentials(opts.credentials);
+    this.playerName = opts.playerName;
+    this.playerData = opts.playerData;
   }
 
   /** Synthesized peer ID for looking up this match’s host. */
@@ -127,6 +133,8 @@ class P2PTransport extends Transport {
     return {
       playerID: this.playerID,
       credentials: this.credentials,
+      playerName: this.playerName,
+      playerData: this.playerData,
       message:
         this.playerID && this.privateKey
           ? signMessage(this.playerID, this.privateKey)

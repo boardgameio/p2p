@@ -73,8 +73,20 @@ export class P2PHost {
     const isAuthenticated: boolean = this.authenticateClient(client);
     // If the client failed to authenticate, don’t register it.
     if (!isAuthenticated) return;
-    const { playerID, credentials } = client.metadata;
+    const { playerID, credentials, playerName, playerData } = client.metadata;
     this.clients.set(client, client);
+
+    const { metadata } = this.db.fetch(this.matchID);
+
+    // Update the match data with extra server properties
+    if (playerID) {
+      const parsedID = Number.parseInt(playerID);
+      if (metadata.players[parsedID]) {
+        metadata.players[parsedID].name = playerName;
+        metadata.players[parsedID].data = playerData;
+      }
+    }
+
     this.master.onConnectionChange(this.matchID, playerID, credentials, true);
   }
 
