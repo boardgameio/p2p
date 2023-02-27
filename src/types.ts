@@ -9,6 +9,8 @@ export interface Client {
     playerID: PlayerID | null;
     credentials: string | undefined;
     message?: string;
+    playerName?: string;
+    playerData?: any;
   };
 }
 
