@@ -80,8 +80,11 @@ export class P2PHost {
 
     // Update the match data with extra server properties
     if (playerID) {
-      metadata.players[parseInt(playerID)].name = playerName;
-      metadata.players[parseInt(playerID)].data = playerData;
+      const parsedID = Number.parseInt(playerID);
+      if (metadata.players[parsedID]) {
+        metadata.players[parsedID].name = playerName;
+        metadata.players[parsedID].data = playerData;
+      }
     }
 
     this.master.onConnectionChange(this.matchID, playerID, credentials, true);
