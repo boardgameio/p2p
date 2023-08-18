@@ -1,4 +1,4 @@
-import Peer from "peerjs";
+import { Peer } from "peerjs";
 import type { PeerJSOption } from "peerjs";
 import { sign, hash } from "tweetnacl";
 import { decodeUTF8, encodeBase64 } from "tweetnacl-util";
